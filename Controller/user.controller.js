@@ -2,9 +2,7 @@ const express = require("express");
 const router = express.Router();
 const userModel = require('../Model/user.model');
 const Bcrypt = require("bcrypt");
-const outbox = require('../Authentication/emailverification')
-
-//Creating User
+const sendmail = require('../Authentication/emailverification')
 
 router.post('/user/create', async (req, res) => {
     req.body.password = Bcrypt.hashSync(req.body.password,10);
@@ -16,8 +14,7 @@ router.post('/user/create', async (req, res) => {
       email_array = user.email;
       username= user.username;
       id = user._id;
-
-     await outbox.outBox(email_array,id);
+     await sendmail.sendMail(email_array,id);
      
       res.status(201).json({
         success: true,
@@ -25,7 +22,7 @@ router.post('/user/create', async (req, res) => {
       });
     } catch (err) {
       if (err.name == 'ValidationError') {
-        console.error('Error Validating!', err.message);
+        console.error('Error occurred Validating!', err.message);
         res.status(422).json(err);
     } 
     else{
@@ -33,19 +30,13 @@ router.post('/user/create', async (req, res) => {
     }
     }
   });
-
-  //Getting User details
-
-  router.get('/user/finduser/:id', async (req, res) => {
+  router.get('/user/confirmemail/:id', async (req, res) => {
     try {
-      await userModel.findByIdAndUpdate(
-          { _id: req.params.id },
-           {status:true}, 
-           { new: true });
+      await userModel.findByIdAndUpdate({ _id: req.params.id }, {status:true}, { new: true });
       console.log(req.body)
       res.status(200).json({
         success: true,
-        msg: 'verified',
+        msg: 'Successfully verified',
       })
     } catch (err) {
       res.status(500).send(err);

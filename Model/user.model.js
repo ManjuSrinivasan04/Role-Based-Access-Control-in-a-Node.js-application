@@ -8,8 +8,8 @@ const userSchema  = new mongoose.Schema({
     },
     role:{
         type: String,
-        enum: ['user','developer'],
-        default: 'user'
+        default: 'user',
+        enum: ['user','developer','manager']
     },
     status:{
         type: Boolean,
@@ -25,6 +25,9 @@ const userSchema  = new mongoose.Schema({
         required:'Password required',
 
     },
+    accessToken: {
+        type: String
+       }
 });
 
 const user = mongoose.model('user',userSchema);
