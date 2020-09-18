@@ -3,17 +3,20 @@ const userVerification = require('../Authentication/userverification')
 const router = express.Router();
 const taskModel = require('../Model/task.model');
 const projectModel = require("../Model/project.model");
+const UserModel=require("../Model/user.model");
 
 //creating the task
 
 router.post('/task/create',userVerification, async (req, res) => {
      const task = new taskModel(req.body);
     try {
+      const user=new UserModel(req.body);
+      if(user.role=='manager'||user.role=='developer'){
       await task.save();
       res.status(201).json({
         success: true,
         data: task
-      });
+      });}
     } catch (err) {
       if (err.name == 'ValidationError') {
         console.error('Oops,Its Validation Error', err.message);
@@ -58,13 +61,15 @@ router.get('/task/findtask',userVerification,async (req,res)=>{
 
 router.post('/task/update/:id',userVerification, async (req, res) => {
   try {
+    const user=new UserModel(req.body);
+      if(user.role=='manager'||user.role=='developer'){
     await taskModel.findByIdAndUpdate(
         { _id: req.params.id }, req.body, { new: true });
     console.log(req.body)
     res.status(200).json({
       success: true,
       msg: 'Task Updated',
-    })
+    });}
   } catch (err) {
     res.status(500).send(err);
   }
@@ -74,13 +79,15 @@ router.post('/task/update/:id',userVerification, async (req, res) => {
 
 router.delete('/task/remove/:id',userVerification, async (req, res) => {
   try {
+    const user=new UserModel(req.body);
+      if(user.role=='manager'||user.role=='developer'){
     const tasks = await taskModel.findById(req.params.id);
      if (!tasks) res.status(404).send('No task found with this id kindly verify the id');
      tasks.remove()
     res.status(200).json({
       success: true,
       msg: 'Your task alone Deleted'
-    });
+    });}
   } catch (err) {
     res.status(500).send(err)
   }

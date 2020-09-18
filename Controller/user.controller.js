@@ -13,6 +13,7 @@ router.post('/user/create', async (req, res) => {
       let email_array ;
       email_array = user.email;
       username= user.username;
+      role=user.role;
       id = user._id;
      await sendmail.sendMail(email_array,id);
      

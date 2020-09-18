@@ -3,6 +3,8 @@ const userVerification = require('../Authentication/userverification')
 const router = express.Router();
 const projectModel = require('../Model/project.model');
 const taskModel = require('../Model/task.model');
+const rolesController=require('../Controller/roles.controller');
+const UserModel=require('../Model/user.model');
 
 //creating the project 
 
@@ -51,13 +53,15 @@ router.get('/project/view/:id', userVerification, async (req, res) => {
 
 router.post('/project/update/:id', async (req, res) => {
   try {
+    const user=new UserModel(req.body);
+      if(user.role=='manager'){
     await projectModel.findByIdAndUpdate(
         { _id: req.params.id }, req.body, { new: true });
     console.log(req.body)
     res.status(200).json({
       success: true,
       msg: 'Project Updated',
-    })
+    });}
   } catch (err) {
     res.status(500).send(err);
   }
@@ -67,6 +71,8 @@ router.post('/project/update/:id', async (req, res) => {
 
 router.delete('/project/delete/:id', userVerification, async (req, res) => {
     try {
+      const user=new UserModel(req.body);
+      if(user.role=='manager'){
       const project = await projectModel.findById(req.params.id);
     const tasks = await taskModel.find(
         {project_id:req.params.id});
@@ -77,7 +83,7 @@ router.delete('/project/delete/:id', userVerification, async (req, res) => {
       res.status(200).json({
         success: true,
         msg: 'Deleted this Project'
-      });
+      });}
     } catch (err) {
       res.status(500).send(err)
     }
@@ -85,6 +91,8 @@ router.delete('/project/delete/:id', userVerification, async (req, res) => {
 
   router.delete('/project/projectdelete/:id',userVerification, async (req, res) => {
     try {
+      const user=new UserModel(req.body);
+      if(user.role=='manager'){
       const project = await projectModel.findById(req.params.id);
         if (!project) 
          res.status(404).send('No such Project');
@@ -92,7 +100,7 @@ router.delete('/project/delete/:id', userVerification, async (req, res) => {
       res.status(200).json({
         success: true,
         msg: 'Your Project Deleted'
-      });
+      });}
     } catch (err) {
       res.status(500).send(err)
     }
