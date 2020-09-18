@@ -1,5 +1,5 @@
 const express = require("express");
-const userVerification = require('../Authentication/userverification')
+const userVerification = require('../Authentication/userverification');
 const router = express.Router();
 const taskModel = require('../Model/task.model');
 const projectModel = require("../Model/project.model");

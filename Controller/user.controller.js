@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const userModel = require('../Model/user.model');
 const Bcrypt = require("bcrypt");
-const sendmail = require('../Authentication/emailverification')
+const sendmail = require('../Authentication/emailverification');
 
 router.post('/user/create', async (req, res) => {
     req.body.password = Bcrypt.hashSync(req.body.password,10);

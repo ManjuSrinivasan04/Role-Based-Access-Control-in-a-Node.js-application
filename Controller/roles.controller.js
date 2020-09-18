@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const Bcrypt = require('bcrypt');
 const {roles} =require('../roles');
 const sendmail = require('../Authentication/emailverification');
+const router=require('../routes');
 
 
 exports.signup = async (req, res) => {
